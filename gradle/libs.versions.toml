@@ -18,6 +18,7 @@
 #
 
 [versions]
+checkstyle = "10.24.0"
 hadoop = "3.4.1"
 iceberg = "1.9.0" # Ensure to update the iceberg version in regtests to keep regtests up-to-date
 quarkus = "3.21.4"
@@ -42,6 +43,7 @@ auth0-jwt = { module = "com.auth0:java-jwt", version = "4.5.0" }
 awssdk-bom = { module = "software.amazon.awssdk:bom", version = "2.31.50" }
 azuresdk-bom = { module = "com.azure:azure-sdk-bom", version = "1.2.35" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.2.0" }
+checkstyle = { module = "com.puppycrawl.tools:checkstyle", version.ref = "checkstyle" }
 commons-codec1 = { module = "commons-codec:commons-codec", version = "1.18.0" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.17.0" }
 commons-text = { module = "org.apache.commons:commons-text", version = "1.13.1" }
