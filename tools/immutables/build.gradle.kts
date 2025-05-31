@@ -17,7 +17,10 @@
  * under the License.
  */
 
-plugins { id("polaris-client") }
+plugins {
+  id("polaris-client")
+  id("polaris-checkstyle")
+}
 
 val processor by configurations.creating
 

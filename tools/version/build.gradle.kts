@@ -19,7 +19,10 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-plugins { id("polaris-client") }
+plugins {
+  id("polaris-client")
+  id("polaris-checkstyle")
+}
 
 dependencies {
   compileOnly(libs.picocli)

@@ -31,6 +31,7 @@ plugins {
   id("idea")
   id("eclipse")
   id("polaris-root")
+  id("polaris-checkstyle")
   alias(libs.plugins.rat)
   // workaround for https://github.com/kordamp/jandex-gradle-plugin/issues/25
   alias(libs.plugins.jandex) apply false

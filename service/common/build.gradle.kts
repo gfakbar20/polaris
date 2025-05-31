@@ -21,6 +21,7 @@ plugins {
   id("polaris-server")
   id("java-test-fixtures")
   alias(libs.plugins.jandex)
+  id("polaris-checkstyle")
 }
 
 dependencies {
