@@ -75,7 +75,6 @@ if (sourceSets != null) {
     sourceSets.withType(SourceSet::class.java).configureEach {
         val sourceSet = this
         val checkstyleTask = tasks.named(sourceSet.getTaskName("checkstyle", null))
-        checkstyleTask.configure { dependsOn(sourceSet.getTaskName("process", "jandexIndex")) }
         checkstyleAll.configure { dependsOn(checkstyleTask) }
     }
 }
