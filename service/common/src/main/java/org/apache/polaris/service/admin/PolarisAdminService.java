@@ -19,7 +19,6 @@
 package org.apache.polaris.service.admin;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.polaris.core.entity.EntityConverter.toNamespace;
 import static com.google.common.base.Preconditions.checkState;
 
 import jakarta.annotation.Nonnull;

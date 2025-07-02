@@ -283,13 +283,14 @@ public abstract class PolarisAuthzTestBase {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                toCatalog(new CatalogEntity.Builder()
-                    .setName(CATALOG_NAME)
-                    .setCatalogType("INTERNAL")
-                    .setDefaultBaseLocation(storageLocation)
-                    .setStorageConfigurationInfo(callContext, storageConfigModel, storageLocation)
-                    .build()
-                    )));
+                toCatalog(
+                    new CatalogEntity.Builder()
+                        .setName(CATALOG_NAME)
+                        .setCatalogType("INTERNAL")
+                        .setDefaultBaseLocation(storageLocation)
+                        .setStorageConfigurationInfo(
+                            callContext, storageConfigModel, storageLocation)
+                        .build())));
 
     initBaseCatalog();
 
