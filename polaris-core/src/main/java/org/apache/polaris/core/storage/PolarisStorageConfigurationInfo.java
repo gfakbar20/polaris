@@ -37,7 +37,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.polaris.core.PolarisDiagnostics;
-import org.apache.polaris.core.admin.model.Catalog;
 import org.apache.polaris.core.config.FeatureConfiguration;
 import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.entity.CatalogEntity;
@@ -136,7 +135,7 @@ public abstract class PolarisStorageConfigurationInfo {
   }
 
   public static Optional<PolarisStorageConfigurationInfo> forEntityPath(
-      PolarisDiagnostics diagnostics, List<PolarisEntity> entityPath) {
+      PolarisDiagnostics diagnostics, List<PolarisEntity> entityPath, String externalCatalogType) {
     return findStorageInfoFromHierarchy(entityPath)
         .map(
             storageInfo ->
@@ -170,7 +169,7 @@ public abstract class PolarisStorageConfigurationInfo {
                           catalog,
                           FeatureConfiguration.ALLOW_UNSTRUCTURED_TABLE_LOCATION);
               if (!allowEscape
-                  && catalog.getCatalogType() != Catalog.TypeEnum.EXTERNAL
+                  && externalCatalogType.equals(catalog.getCatalogType())
                   && baseLocation != null) {
                 LOGGER.debug(
                     "Not allowing unstructured table location for entity: {}",
@@ -253,4 +252,5 @@ public abstract class PolarisStorageConfigurationInfo {
       return prefixes;
     }
   }
+
 }

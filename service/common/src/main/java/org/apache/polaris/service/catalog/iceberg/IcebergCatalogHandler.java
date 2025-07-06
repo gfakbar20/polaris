@@ -102,6 +102,7 @@ import org.apache.polaris.service.context.catalog.CallContextCatalogFactory;
 import org.apache.polaris.service.http.IcebergHttpUtil;
 import org.apache.polaris.service.http.IfNoneMatch;
 import org.apache.polaris.service.types.NotificationRequest;
+import org.apache.polaris.service.util.CatalogEntityConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -298,7 +299,7 @@ public class IcebergCatalogHandler extends CatalogHandler implements AutoCloseab
 
   private static boolean isStaticFacade(CatalogEntity catalog) {
     return org.apache.polaris.core.admin.model.Catalog.TypeEnum.EXTERNAL.equals(
-            catalog.getCatalogType())
+            CatalogEntityConverter.convertCatalogTypeToEnum(catalog.getCatalogType()))
         && !catalog.isPassthroughFacade();
   }
 
@@ -581,8 +582,8 @@ public class IcebergCatalogHandler extends CatalogHandler implements AutoCloseab
                 .getResolvedReferenceCatalogEntity()
                 .getResolvedLeafEntity()
                 .getEntity());
-    if (catalog
-        .getCatalogType()
+    if (CatalogEntityConverter.convertCatalogTypeToEnum(catalog
+        .getCatalogType())
         .equals(org.apache.polaris.core.admin.model.Catalog.TypeEnum.INTERNAL)) {
       LOGGER
           .atWarn()
@@ -706,8 +707,8 @@ public class IcebergCatalogHandler extends CatalogHandler implements AutoCloseab
             callContext.getRealmContext(),
             catalogEntity,
             FeatureConfiguration.ALLOW_EXTERNAL_CATALOG_CREDENTIAL_VENDING));
-    if (catalogEntity
-            .getCatalogType()
+    if (CatalogEntityConverter.convertCatalogTypeToEnum(catalogEntity
+            .getCatalogType())
             .equals(org.apache.polaris.core.admin.model.Catalog.TypeEnum.EXTERNAL)
         && !configurationStore.getConfiguration(
             callContext.getRealmContext(),

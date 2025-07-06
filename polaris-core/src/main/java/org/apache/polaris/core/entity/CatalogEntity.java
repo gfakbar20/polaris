@@ -198,10 +198,8 @@ public class CatalogEntity extends PolarisEntity implements LocationBasedEntity 
     return null;
   }
 
-  public Catalog.TypeEnum getCatalogType() {
-    return Optional.ofNullable(getInternalPropertiesAsMap().get(CATALOG_TYPE_PROPERTY))
-        .map(Catalog.TypeEnum::valueOf)
-        .orElse(null);
+  public String getCatalogType() {
+    return getInternalPropertiesAsMap().get(CATALOG_TYPE_PROPERTY);
   }
 
   public boolean isPassthroughFacade() {

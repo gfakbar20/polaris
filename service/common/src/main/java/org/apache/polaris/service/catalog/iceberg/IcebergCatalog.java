@@ -88,6 +88,7 @@ import org.apache.iceberg.view.ViewOperations;
 import org.apache.iceberg.view.ViewProperties;
 import org.apache.iceberg.view.ViewUtil;
 import org.apache.polaris.core.PolarisCallContext;
+import org.apache.polaris.core.admin.model.Catalog;
 import org.apache.polaris.core.admin.model.StorageConfigInfo;
 import org.apache.polaris.core.catalog.PolarisCatalogHelpers;
 import org.apache.polaris.core.config.BehaviorChangeConfiguration;
@@ -139,6 +140,7 @@ import org.apache.polaris.service.events.PolarisEventListener;
 import org.apache.polaris.service.task.TaskExecutor;
 import org.apache.polaris.service.types.NotificationRequest;
 import org.apache.polaris.service.types.NotificationType;
+import org.apache.polaris.service.util.NamespaceEntityConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -970,7 +972,7 @@ public class IcebergCatalog extends BaseMetastoreViewCatalog
     Optional<PolarisStorageConfigurationInfo> optStorageConfiguration =
         PolarisStorageConfigurationInfo.forEntityPath(
             callContext.getPolarisCallContext().getDiagServices(),
-            resolvedStorageEntity.getRawFullPath());
+            resolvedStorageEntity.getRawFullPath(), Catalog.TypeEnum.EXTERNAL.toString());
 
     optStorageConfiguration.ifPresentOrElse(
         storageConfigInfo -> {
@@ -1137,7 +1139,7 @@ public class IcebergCatalog extends BaseMetastoreViewCatalog
                         "Unable to resolve siblings entities to validate location - could not list tables");
                   }
                   return siblingTablesResult.getEntities().stream()
-                      .map(tbl -> TableIdentifier.of(toNamespace(ns), tbl.getName()))
+                      .map(tbl -> TableIdentifier.of(NamespaceEntityConverter.toApiPayloadSchema(ns), tbl.getName()))
                       .collect(Collectors.toList());
                 })
             .orElse(List.of());
@@ -1148,7 +1150,7 @@ public class IcebergCatalog extends BaseMetastoreViewCatalog
                 ns -> {
                   String[] nsLevels =
                       parentNamespace
-                          .map(parent -> toNamespace(parent).levels())
+                          .map(parent -> NamespaceEntityConverter.toApiPayloadSchema(parent).levels())
                           .orElse(new String[0]);
                   String[] newLevels = Arrays.copyOf(nsLevels, nsLevels.length + 1);
                   newLevels[nsLevels.length] = ns.getName();

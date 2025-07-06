@@ -143,6 +143,12 @@ public final class CatalogEntityConverter {
     return null;
   }
 
+  public static Catalog.TypeEnum convertCatalogTypeToEnum(String type) {
+    return Optional.ofNullable(type)
+            .map(Catalog.TypeEnum::valueOf)
+            .orElse(null);
+  }
+
   private static ConnectionConfigInfo getEntityConnectionInfo(
       Map<String, String> internalProperties, CatalogEntity entity) {
     if (internalProperties.containsKey(
