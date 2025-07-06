@@ -19,7 +19,7 @@
 package org.apache.polaris.service.quarkus.catalog;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
+import static org.apache.polaris.service.util.CatalogEntityConverter.toApiPayloadSchema;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -345,7 +345,7 @@ public abstract class IcebergCatalogTest extends CatalogTests<IcebergCatalog> {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                toCatalog(
+                toApiPayloadSchema(
                     new CatalogEntity.Builder()
                         .setName(CATALOG_NAME)
                         .setDefaultBaseLocation(storageLocation)
@@ -1358,7 +1358,7 @@ public abstract class IcebergCatalogTest extends CatalogTests<IcebergCatalog> {
     PolarisEntity catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                toCatalog(
+                toApiPayloadSchema(
                     new CatalogEntity.Builder()
                         .setDefaultBaseLocation("file://")
                         .setName(catalogWithoutStorage)
@@ -1424,7 +1424,7 @@ public abstract class IcebergCatalogTest extends CatalogTests<IcebergCatalog> {
 
     adminService.createCatalog(
         new CreateCatalogRequest(
-            toCatalog(
+            toApiPayloadSchema(
                 new CatalogEntity.Builder()
                     .setDefaultBaseLocation("http://maliciousdomain.com")
                     .setName(catalogName)
@@ -1954,7 +1954,7 @@ public abstract class IcebergCatalogTest extends CatalogTests<IcebergCatalog> {
             .build();
     adminService.createCatalog(
         new CreateCatalogRequest(
-            toCatalog(
+            toApiPayloadSchema(
                 new CatalogEntity.Builder()
                     .setName(noPurgeCatalogName)
                     .setDefaultBaseLocation(storageLocation)
@@ -2272,7 +2272,7 @@ public abstract class IcebergCatalogTest extends CatalogTests<IcebergCatalog> {
             () -> {
               adminService.createCatalog(
                   new CreateCatalogRequest(
-                      toCatalog(
+                      toApiPayloadSchema(
                           new CatalogEntity.Builder()
                               .setDefaultBaseLocation("file://")
                               .setName("createCatalogWithReservedProperty")
@@ -2287,7 +2287,7 @@ public abstract class IcebergCatalogTest extends CatalogTests<IcebergCatalog> {
   public void updateCatalogWithReservedProperty() {
     adminService.createCatalog(
         new CreateCatalogRequest(
-            toCatalog(
+            toApiPayloadSchema(
                 new CatalogEntity.Builder()
                     .setDefaultBaseLocation("file://")
                     .setName("updateCatalogWithReservedProperty")

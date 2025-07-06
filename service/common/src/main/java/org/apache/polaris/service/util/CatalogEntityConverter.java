@@ -17,39 +17,40 @@
  * under the License.
  */
 
-package org.apache.polaris.core.entity;
+package org.apache.polaris.service.util;
 
 import static org.apache.polaris.core.admin.model.StorageConfigInfo.StorageTypeEnum.AZURE;
 import static org.apache.polaris.core.entity.CatalogEntity.CATALOG_TYPE_PROPERTY;
 import static org.apache.polaris.core.entity.CatalogEntity.DEFAULT_BASE_LOCATION_KEY;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.iceberg.catalog.Namespace;
 import org.apache.polaris.core.admin.model.AwsStorageConfigInfo;
 import org.apache.polaris.core.admin.model.AzureStorageConfigInfo;
 import org.apache.polaris.core.admin.model.Catalog;
 import org.apache.polaris.core.admin.model.CatalogProperties;
-import org.apache.polaris.core.admin.model.CatalogRole;
 import org.apache.polaris.core.admin.model.ConnectionConfigInfo;
 import org.apache.polaris.core.admin.model.ExternalCatalog;
 import org.apache.polaris.core.admin.model.FileStorageConfigInfo;
 import org.apache.polaris.core.admin.model.GcpStorageConfigInfo;
 import org.apache.polaris.core.admin.model.PolarisCatalog;
-import org.apache.polaris.core.admin.model.Principal;
-import org.apache.polaris.core.admin.model.PrincipalRole;
 import org.apache.polaris.core.admin.model.StorageConfigInfo;
 import org.apache.polaris.core.connection.ConnectionConfigInfoDpo;
-import org.apache.polaris.core.entity.table.federated.FederatedEntities;
+import org.apache.polaris.core.context.CallContext;
+import org.apache.polaris.core.entity.CatalogEntity;
+import org.apache.polaris.core.entity.PolarisEntityConstants;
 import org.apache.polaris.core.storage.FileStorageConfigurationInfo;
 import org.apache.polaris.core.storage.PolarisStorageConfigurationInfo;
 import org.apache.polaris.core.storage.aws.AwsStorageConfigurationInfo;
 import org.apache.polaris.core.storage.azure.AzureStorageConfigurationInfo;
 import org.apache.polaris.core.storage.gcp.GcpStorageConfigurationInfo;
 
-public final class EntityConverter {
+public final class CatalogEntityConverter {
 
-  public static Catalog toCatalog(CatalogEntity entity) {
+  private CatalogEntityConverter() {}
+
+  public static Catalog toApiPayloadSchema(CatalogEntity entity) {
     Map<String, String> internalProperties = entity.getInternalPropertiesAsMap();
     Catalog.TypeEnum catalogType =
         Optional.ofNullable(internalProperties.get(CATALOG_TYPE_PROPERTY))
@@ -83,43 +84,20 @@ public final class EntityConverter {
             .build();
   }
 
-  public static CatalogRole toCatalogRole(CatalogRoleEntity entity) {
-    return new CatalogRole(
-        entity.getName(),
-        entity.getPropertiesAsMap(),
-        entity.getCreateTimestamp(),
-        entity.getLastUpdateTimestamp(),
-        entity.getEntityVersion());
-  }
-
-  public static Namespace toNamespace(NamespaceEntity entity) {
-    Namespace parent = entity.getParentNamespace();
-    String[] levels = new String[parent.length() + 1];
-    for (int i = 0; i < parent.length(); ++i) {
-      levels[i] = parent.level(i);
-    }
-    levels[levels.length - 1] = entity.getName();
-    return Namespace.of(levels);
-  }
-
-  public static Principal toPrincipal(PrincipalEntity entity) {
-    return new Principal(
-        entity.getName(),
-        entity.getClientId(),
-        entity.getPropertiesAsMap(),
-        entity.getCreateTimestamp(),
-        entity.getLastUpdateTimestamp(),
-        entity.getEntityVersion());
-  }
-
-  public static PrincipalRole toPrincipalRole(PrincipalRoleEntity entity) {
-    return new PrincipalRole(
-        entity.getName(),
-        FederatedEntities.isFederated(entity),
-        entity.getPropertiesAsMap(),
-        entity.getCreateTimestamp(),
-        entity.getLastUpdateTimestamp(),
-        entity.getEntityVersion());
+  public static CatalogEntity fromApiPayloadSchema(CallContext callContext, Catalog catalog) {
+    CatalogEntity.Builder builder =
+        new CatalogEntity.Builder()
+            .setName(catalog.getName())
+            .setProperties(catalog.getProperties().toMap())
+            .setCatalogType(catalog.getType().name());
+    Map<String, String> internalProperties = new HashMap<>();
+    internalProperties.put(CATALOG_TYPE_PROPERTY, catalog.getType().name());
+    builder.setInternalProperties(internalProperties);
+    builder.setStorageConfigurationInfo(
+        callContext,
+        catalog.getStorageConfigInfo(),
+        catalog.getProperties().getDefaultBaseLocation());
+    return builder.build();
   }
 
   private static StorageConfigInfo getEntityStorageInfo(

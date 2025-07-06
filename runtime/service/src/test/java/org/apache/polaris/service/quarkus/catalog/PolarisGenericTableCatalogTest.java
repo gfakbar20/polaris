@@ -19,7 +19,7 @@
 package org.apache.polaris.service.quarkus.catalog;
 
 import static org.apache.iceberg.types.Types.NestedField.required;
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
+import static org.apache.polaris.service.util.CatalogEntityConverter.toApiPayloadSchema;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
@@ -224,7 +224,7 @@ public class PolarisGenericTableCatalogTest {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                toCatalog(
+                toApiPayloadSchema(
                     new CatalogEntity.Builder()
                         .setName(CATALOG_NAME)
                         .setDefaultBaseLocation(storageLocation)

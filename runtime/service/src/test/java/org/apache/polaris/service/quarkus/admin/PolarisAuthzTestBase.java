@@ -19,7 +19,7 @@
 package org.apache.polaris.service.quarkus.admin;
 
 import static org.apache.iceberg.types.Types.NestedField.required;
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
+import static org.apache.polaris.service.util.CatalogEntityConverter.toApiPayloadSchema;
 
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -283,7 +283,7 @@ public abstract class PolarisAuthzTestBase {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                toCatalog(
+                toApiPayloadSchema(
                     new CatalogEntity.Builder()
                         .setName(CATALOG_NAME)
                         .setCatalogType("INTERNAL")

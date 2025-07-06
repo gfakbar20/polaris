@@ -18,7 +18,7 @@
  */
 package org.apache.polaris.service.quarkus.catalog;
 
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
+import static org.apache.polaris.service.util.CatalogEntityConverter.toApiPayloadSchema;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
@@ -217,7 +217,7 @@ public class IcebergCatalogViewTest extends ViewCatalogTests<IcebergCatalog> {
 
     adminService.createCatalog(
         new CreateCatalogRequest(
-            toCatalog(
+            toApiPayloadSchema(
                 new CatalogEntity.Builder()
                     .setName(CATALOG_NAME)
                     .addProperty(

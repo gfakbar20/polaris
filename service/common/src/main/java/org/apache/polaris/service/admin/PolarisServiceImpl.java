@@ -18,11 +18,6 @@
  */
 package org.apache.polaris.service.admin;
 
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
-import static org.apache.polaris.core.entity.EntityConverter.toCatalogRole;
-import static org.apache.polaris.core.entity.EntityConverter.toPrincipal;
-import static org.apache.polaris.core.entity.EntityConverter.toPrincipalRole;
-
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
@@ -72,7 +67,6 @@ import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.context.RealmContext;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
-import org.apache.polaris.core.entity.EntityConverter;
 import org.apache.polaris.core.entity.PolarisPrivilege;
 import org.apache.polaris.core.entity.PrincipalEntity;
 import org.apache.polaris.core.entity.PrincipalRoleEntity;
@@ -87,6 +81,10 @@ import org.apache.polaris.service.admin.api.PolarisPrincipalsApiService;
 import org.apache.polaris.service.config.RealmEntityManagerFactory;
 import org.apache.polaris.service.config.ReservedProperties;
 import org.apache.polaris.service.types.PolicyIdentifier;
+import org.apache.polaris.service.util.CatalogEntityConverter;
+import org.apache.polaris.service.util.CatalogRoleEntityConverter;
+import org.apache.polaris.service.util.PrincipalEntityConverter;
+import org.apache.polaris.service.util.PrincipalRoleEntityConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +152,9 @@ public class PolarisServiceImpl
     Catalog catalog = request.getCatalog();
     validateStorageConfig(catalog.getStorageConfigInfo());
     validateExternalCatalog(catalog);
-    Catalog newCatalog = toCatalog(new CatalogEntity(adminService.createCatalog(request)));
+    Catalog newCatalog =
+        CatalogEntityConverter.toApiPayloadSchema(
+            new CatalogEntity(adminService.createCatalog(request)));
     LOGGER.info("Created new catalog {}", newCatalog);
     return Response.status(Response.Status.CREATED).build();
   }
@@ -239,7 +239,9 @@ public class PolarisServiceImpl
   public Response getCatalog(
       String catalogName, RealmContext realmContext, SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(toCatalog(adminService.getCatalog(catalogName))).build();
+    return Response.ok(
+            CatalogEntityConverter.toApiPayloadSchema(adminService.getCatalog(catalogName)))
+        .build();
   }
 
   /** From PolarisCatalogsApiService */
@@ -253,7 +255,10 @@ public class PolarisServiceImpl
     if (updateRequest.getStorageConfigInfo() != null) {
       validateStorageConfig(updateRequest.getStorageConfigInfo());
     }
-    return Response.ok(toCatalog(adminService.updateCatalog(catalogName, updateRequest))).build();
+    return Response.ok(
+            CatalogEntityConverter.toApiPayloadSchema(
+                adminService.updateCatalog(catalogName, updateRequest)))
+        .build();
   }
 
   /** From PolarisCatalogsApiService */
@@ -263,7 +268,7 @@ public class PolarisServiceImpl
     List<Catalog> catalogList =
         adminService.listCatalogs().stream()
             .map(CatalogEntity::new)
-            .map(EntityConverter::toCatalog)
+            .map(CatalogEntityConverter::toApiPayloadSchema)
             .toList();
     Catalogs catalogs = new Catalogs(catalogList);
     LOGGER.debug("listCatalogs returning: {}", catalogs);
@@ -305,7 +310,9 @@ public class PolarisServiceImpl
   public Response getPrincipal(
       String principalName, RealmContext realmContext, SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(toPrincipal(adminService.getPrincipal(principalName))).build();
+    return Response.ok(
+            PrincipalEntityConverter.toApiPayloadSchema(adminService.getPrincipal(principalName)))
+        .build();
   }
 
   /** From PolarisPrincipalsApiService */
@@ -316,7 +323,9 @@ public class PolarisServiceImpl
       RealmContext realmContext,
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(toPrincipal(adminService.updatePrincipal(principalName, updateRequest)))
+    return Response.ok(
+            PrincipalEntityConverter.toApiPayloadSchema(
+                adminService.updatePrincipal(principalName, updateRequest)))
         .build();
   }
 
@@ -335,7 +344,7 @@ public class PolarisServiceImpl
     List<Principal> principalList =
         adminService.listPrincipals().stream()
             .map(PrincipalEntity::new)
-            .map(EntityConverter::toPrincipal)
+            .map(PrincipalEntityConverter::toApiPayloadSchema)
             .toList();
     Principals principals = new Principals(principalList);
     LOGGER.debug("listPrincipals returning: {}", principals);
@@ -357,7 +366,8 @@ public class PolarisServiceImpl
                     request.getPrincipalRole().getProperties()))
             .build();
     PrincipalRole newPrincipalRole =
-        toPrincipalRole(new PrincipalRoleEntity(adminService.createPrincipalRole(entity)));
+        PrincipalRoleEntityConverter.toApiPayloadSchema(
+            new PrincipalRoleEntity(adminService.createPrincipalRole(entity)));
     LOGGER.info("Created new principalRole {}", newPrincipalRole);
     return Response.status(Response.Status.CREATED).build();
   }
@@ -376,7 +386,10 @@ public class PolarisServiceImpl
   public Response getPrincipalRole(
       String principalRoleName, RealmContext realmContext, SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(toPrincipalRole(adminService.getPrincipalRole(principalRoleName))).build();
+    return Response.ok(
+            PrincipalRoleEntityConverter.toApiPayloadSchema(
+                adminService.getPrincipalRole(principalRoleName)))
+        .build();
   }
 
   /** From PolarisPrincipalRolesApiService */
@@ -388,7 +401,8 @@ public class PolarisServiceImpl
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
     return Response.ok(
-            toPrincipalRole(adminService.updatePrincipalRole(principalRoleName, updateRequest)))
+            PrincipalRoleEntityConverter.toApiPayloadSchema(
+                adminService.updatePrincipalRole(principalRoleName, updateRequest)))
         .build();
   }
 
@@ -399,7 +413,7 @@ public class PolarisServiceImpl
     List<PrincipalRole> principalRoleList =
         adminService.listPrincipalRoles().stream()
             .map(PrincipalRoleEntity::new)
-            .map(EntityConverter::toPrincipalRole)
+            .map(PrincipalRoleEntityConverter::toApiPayloadSchema)
             .toList();
     PrincipalRoles principalRoles = new PrincipalRoles(principalRoleList);
     LOGGER.debug("listPrincipalRoles returning: {}", principalRoles);
@@ -422,7 +436,8 @@ public class PolarisServiceImpl
                     request.getCatalogRole().getProperties()))
             .build();
     CatalogRole newCatalogRole =
-        toCatalogRole(new CatalogRoleEntity(adminService.createCatalogRole(catalogName, entity)));
+        CatalogRoleEntityConverter.toApiPayloadSchema(
+            new CatalogRoleEntity(adminService.createCatalogRole(catalogName, entity)));
     LOGGER.info("Created new catalogRole {}", newCatalogRole);
     return Response.status(Response.Status.CREATED).build();
   }
@@ -447,7 +462,9 @@ public class PolarisServiceImpl
       RealmContext realmContext,
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(toCatalogRole(adminService.getCatalogRole(catalogName, catalogRoleName)))
+    return Response.ok(
+            CatalogRoleEntityConverter.toApiPayloadSchema(
+                adminService.getCatalogRole(catalogName, catalogRoleName)))
         .build();
   }
 
@@ -461,7 +478,7 @@ public class PolarisServiceImpl
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
     return Response.ok(
-            toCatalogRole(
+            CatalogRoleEntityConverter.toApiPayloadSchema(
                 adminService.updateCatalogRole(catalogName, catalogRoleName, updateRequest)))
         .build();
   }
@@ -474,7 +491,7 @@ public class PolarisServiceImpl
     List<CatalogRole> catalogRoleList =
         adminService.listCatalogRoles(catalogName).stream()
             .map(CatalogRoleEntity::new)
-            .map(EntityConverter::toCatalogRole)
+            .map(CatalogRoleEntityConverter::toApiPayloadSchema)
             .toList();
     CatalogRoles catalogRoles = new CatalogRoles(catalogRoleList);
     LOGGER.debug("listCatalogRoles returning: {}", catalogRoles);
@@ -518,7 +535,7 @@ public class PolarisServiceImpl
     List<PrincipalRole> principalRoleList =
         adminService.listPrincipalRolesAssigned(principalName).stream()
             .map(PrincipalRoleEntity::new)
-            .map(EntityConverter::toPrincipalRole)
+            .map(PrincipalRoleEntityConverter::toApiPayloadSchema)
             .toList();
     PrincipalRoles principalRoles = new PrincipalRoles(principalRoleList);
     LOGGER.debug("listPrincipalRolesAssigned returning: {}", principalRoles);
@@ -571,7 +588,7 @@ public class PolarisServiceImpl
     List<Principal> principalList =
         adminService.listAssigneePrincipalsForPrincipalRole(principalRoleName).stream()
             .map(PrincipalEntity::new)
-            .map(EntityConverter::toPrincipal)
+            .map(PrincipalEntityConverter::toApiPayloadSchema)
             .toList();
     Principals principals = new Principals(principalList);
     LOGGER.debug("listAssigneePrincipalsForPrincipalRole returning: {}", principals);
@@ -589,7 +606,7 @@ public class PolarisServiceImpl
     List<CatalogRole> catalogRoleList =
         adminService.listCatalogRolesForPrincipalRole(principalRoleName, catalogName).stream()
             .map(CatalogRoleEntity::new)
-            .map(EntityConverter::toCatalogRole)
+            .map(CatalogRoleEntityConverter::toApiPayloadSchema)
             .toList();
     CatalogRoles catalogRoles = new CatalogRoles(catalogRoleList);
     LOGGER.debug("listCatalogRolesForPrincipalRole returning: {}", catalogRoles);
@@ -779,7 +796,7 @@ public class PolarisServiceImpl
     List<PrincipalRole> principalRoleList =
         adminService.listAssigneePrincipalRolesForCatalogRole(catalogName, catalogRoleName).stream()
             .map(PrincipalRoleEntity::new)
-            .map(EntityConverter::toPrincipalRole)
+            .map(PrincipalRoleEntityConverter::toApiPayloadSchema)
             .toList();
     PrincipalRoles principalRoles = new PrincipalRoles(principalRoleList);
     LOGGER.debug("listAssigneePrincipalRolesForCatalogRole returning: {}", principalRoles);

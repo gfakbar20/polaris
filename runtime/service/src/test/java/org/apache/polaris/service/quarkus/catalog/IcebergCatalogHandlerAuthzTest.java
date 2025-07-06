@@ -18,7 +18,7 @@
  */
 package org.apache.polaris.service.quarkus.catalog;
 
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
+import static org.apache.polaris.service.util.CatalogEntityConverter.toApiPayloadSchema;
 
 import com.google.common.collect.ImmutableMap;
 import io.quarkus.test.junit.QuarkusTest;
@@ -1725,7 +1725,7 @@ public class IcebergCatalogHandlerAuthzTest extends PolarisAuthzTestBase {
             .build();
     adminService.createCatalog(
         new CreateCatalogRequest(
-            toCatalog(
+            toApiPayloadSchema(
                 new CatalogEntity.Builder()
                     .setName(externalCatalog)
                     .setDefaultBaseLocation(storageLocation)

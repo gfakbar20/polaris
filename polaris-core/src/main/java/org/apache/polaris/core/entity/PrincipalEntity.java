@@ -18,8 +18,6 @@
  */
 package org.apache.polaris.core.entity;
 
-import org.apache.polaris.core.admin.model.Principal;
-
 /** Wrapper for translating between the REST Principal object and the base PolarisEntity type. */
 public class PrincipalEntity extends PolarisEntity {
   public PrincipalEntity(PolarisBaseEntity sourceEntity) {
@@ -31,14 +29,6 @@ public class PrincipalEntity extends PolarisEntity {
       return new PrincipalEntity(sourceEntity);
     }
     return null;
-  }
-
-  public static PrincipalEntity fromPrincipal(Principal principal) {
-    return new Builder()
-        .setName(principal.getName())
-        .setProperties(principal.getProperties())
-        .setClientId(principal.getClientId())
-        .build();
   }
 
   public String getClientId() {

@@ -19,10 +19,10 @@
 package org.apache.polaris.service.quarkus.catalog;
 
 import static org.apache.iceberg.types.Types.NestedField.required;
-import static org.apache.polaris.core.entity.EntityConverter.toCatalog;
 import static org.apache.polaris.core.policy.PredefinedPolicyTypes.DATA_COMPACTION;
 import static org.apache.polaris.core.policy.PredefinedPolicyTypes.METADATA_COMPACTION;
 import static org.apache.polaris.core.policy.PredefinedPolicyTypes.ORPHAN_FILE_REMOVAL;
+import static org.apache.polaris.service.util.CatalogEntityConverter.toApiPayloadSchema;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -252,7 +252,7 @@ public class PolicyCatalogTest {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                toCatalog(
+                toApiPayloadSchema(
                     new CatalogEntity.Builder()
                         .setName(CATALOG_NAME)
                         .setDefaultBaseLocation(storageLocation)

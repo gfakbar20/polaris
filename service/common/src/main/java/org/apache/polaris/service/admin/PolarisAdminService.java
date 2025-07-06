@@ -115,6 +115,9 @@ import org.apache.polaris.core.storage.azure.AzureStorageConfigurationInfo;
 import org.apache.polaris.service.catalog.common.CatalogHandler;
 import org.apache.polaris.service.config.ReservedProperties;
 import org.apache.polaris.service.types.PolicyIdentifier;
+import org.apache.polaris.service.util.CatalogEntityConverter;
+import org.apache.polaris.service.util.NamespaceEntityConverter;
+import org.apache.polaris.service.util.PrincipalEntityConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -711,7 +714,8 @@ public class PolarisAdminService {
     PolarisAuthorizableOperation op = PolarisAuthorizableOperation.CREATE_CATALOG;
     authorizeBasicRootOperationOrThrow(op);
 
-    CatalogEntity entity = CatalogEntity.fromCatalog(callContext, catalogRequest.getCatalog());
+    CatalogEntity entity =
+        CatalogEntityConverter.fromApiPayloadSchema(callContext, catalogRequest.getCatalog());
 
     checkArgument(entity.getId() == -1, "Entity to be created must have no ID assigned");
 
@@ -1007,7 +1011,8 @@ public class PolarisAdminService {
           entity.getName());
     }
     return new PrincipalWithCredentials(
-        new PrincipalEntity(principalResult.getPrincipal()).asPrincipal(),
+        PrincipalEntityConverter.toApiPayloadSchema(
+            new PrincipalEntity(principalResult.getPrincipal())),
         new PrincipalWithCredentialsCredentials(
             principalResult.getPrincipalSecrets().getPrincipalClientId(),
             principalResult.getPrincipalSecrets().getMainSecret()));
@@ -1126,7 +1131,7 @@ public class PolarisAdminService {
                 currentPrincipalEntity.getId(),
                 currentPrincipalEntity.getType()));
     return new PrincipalWithCredentials(
-        PrincipalEntity.of(newPrincipal).asPrincipal(),
+        toPrincipal(PrincipalEntity.of(newPrincipal)),
         new PrincipalWithCredentialsCredentials(
             newSecrets.getPrincipalClientId(), newSecrets.getMainSecret()));
   }
@@ -1901,7 +1906,10 @@ public class PolarisAdminService {
             {
               NamespaceGrant grant =
                   new NamespaceGrant(
-                      List.of(NamespaceEntity.of(baseEntity).asNamespace().levels()),
+                      List.of(
+                          NamespaceEntityConverter.toApiPayloadSchema(
+                                  NamespaceEntity.of(baseEntity))
+                              .levels()),
                       NamespacePrivilege.valueOf(privilege.toString()),
                       GrantResource.TypeEnum.NAMESPACE);
               namespaceGrants.add(grant);

@@ -18,8 +18,6 @@
  */
 package org.apache.polaris.core.entity;
 
-import org.apache.polaris.core.admin.model.CatalogRole;
-
 /** Wrapper for translating between the REST CatalogRole object and the base PolarisEntity type. */
 public class CatalogRoleEntity extends PolarisEntity {
   public CatalogRoleEntity(PolarisBaseEntity sourceEntity) {
@@ -31,13 +29,6 @@ public class CatalogRoleEntity extends PolarisEntity {
       return new CatalogRoleEntity(sourceEntity);
     }
     return null;
-  }
-
-  public static CatalogRoleEntity fromCatalogRole(CatalogRole catalogRole) {
-    return new Builder()
-        .setName(catalogRole.getName())
-        .setProperties(catalogRole.getProperties())
-        .build();
   }
 
   public static class Builder extends PolarisEntity.BaseBuilder<CatalogRoleEntity, Builder> {
