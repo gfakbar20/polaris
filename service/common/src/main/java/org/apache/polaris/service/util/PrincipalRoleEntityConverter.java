@@ -39,9 +39,9 @@ public final class PrincipalRoleEntityConverter {
 
   public static PrincipalRoleEntity fromApiPayloadSchema(PrincipalRole principalRole) {
     return new PrincipalRoleEntity.Builder()
-            .setName(principalRole.getName())
-            .setFederated(principalRole.getFederated())
-            .setProperties(principalRole.getProperties())
-            .build();
+        .setName(principalRole.getName())
+        .setFederated(principalRole.getFederated())
+        .setProperties(principalRole.getProperties())
+        .build();
   }
 }

@@ -38,9 +38,9 @@ public final class PrincipalEntityConverter {
 
   public static PrincipalEntity fromApiPayloadSchema(Principal principal) {
     return new PrincipalEntity.Builder()
-            .setName(principal.getName())
-            .setProperties(principal.getProperties())
-            .setClientId(principal.getClientId())
-            .build();
+        .setName(principal.getName())
+        .setProperties(principal.getProperties())
+        .setClientId(principal.getClientId())
+        .build();
   }
 }

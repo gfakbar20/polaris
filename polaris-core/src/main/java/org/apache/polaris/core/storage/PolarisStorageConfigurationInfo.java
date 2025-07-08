@@ -252,5 +252,4 @@ public abstract class PolarisStorageConfigurationInfo {
       return prefixes;
     }
   }
-
 }

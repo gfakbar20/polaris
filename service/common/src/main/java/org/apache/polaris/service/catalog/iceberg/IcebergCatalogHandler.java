@@ -582,8 +582,7 @@ public class IcebergCatalogHandler extends CatalogHandler implements AutoCloseab
                 .getResolvedReferenceCatalogEntity()
                 .getResolvedLeafEntity()
                 .getEntity());
-    if (CatalogEntityConverter.convertCatalogTypeToEnum(catalog
-        .getCatalogType())
+    if (CatalogEntityConverter.convertCatalogTypeToEnum(catalog.getCatalogType())
         .equals(org.apache.polaris.core.admin.model.Catalog.TypeEnum.INTERNAL)) {
       LOGGER
           .atWarn()
@@ -707,8 +706,7 @@ public class IcebergCatalogHandler extends CatalogHandler implements AutoCloseab
             callContext.getRealmContext(),
             catalogEntity,
             FeatureConfiguration.ALLOW_EXTERNAL_CATALOG_CREDENTIAL_VENDING));
-    if (CatalogEntityConverter.convertCatalogTypeToEnum(catalogEntity
-            .getCatalogType())
+    if (CatalogEntityConverter.convertCatalogTypeToEnum(catalogEntity.getCatalogType())
             .equals(org.apache.polaris.core.admin.model.Catalog.TypeEnum.EXTERNAL)
         && !configurationStore.getConfiguration(
             callContext.getRealmContext(),

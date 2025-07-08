@@ -37,8 +37,8 @@ public final class CatalogRoleEntityConverter {
 
   public static CatalogRoleEntity fromApiPayloadSchema(CatalogRole catalogRole) {
     return new CatalogRoleEntity.Builder()
-            .setName(catalogRole.getName())
-            .setProperties(catalogRole.getProperties())
-            .build();
+        .setName(catalogRole.getName())
+        .setProperties(catalogRole.getProperties())
+        .build();
   }
 }

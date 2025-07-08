@@ -144,9 +144,7 @@ public final class CatalogEntityConverter {
   }
 
   public static Catalog.TypeEnum convertCatalogTypeToEnum(String type) {
-    return Optional.ofNullable(type)
-            .map(Catalog.TypeEnum::valueOf)
-            .orElse(null);
+    return Optional.ofNullable(type).map(Catalog.TypeEnum::valueOf).orElse(null);
   }
 
   private static ConnectionConfigInfo getEntityConnectionInfo(
