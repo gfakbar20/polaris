@@ -59,6 +59,7 @@ import org.apache.polaris.core.auth.PolarisAuthorizerImpl;
 import org.apache.polaris.core.config.PolarisConfigurationStore;
 import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.context.RealmContext;
+import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
 import org.apache.polaris.core.entity.PolarisBaseEntity;
@@ -282,13 +283,13 @@ public abstract class PolarisAuthzTestBase {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                new CatalogEntity.Builder()
-                    .setName(CATALOG_NAME)
-                    .setCatalogType("INTERNAL")
-                    .setDefaultBaseLocation(storageLocation)
-                    .setStorageConfigurationInfo(callContext, storageConfigModel, storageLocation)
-                    .build()
-                    .asCatalog()));
+                CatalogEntityConverter
+                    .asCatalog(new CatalogEntity.Builder()
+                        .setName(CATALOG_NAME)
+                        .setCatalogType("INTERNAL")
+                        .setDefaultBaseLocation(storageLocation)
+                        .setStorageConfigurationInfo(callContext, storageConfigModel, storageLocation)
+                        .build())));
 
     initBaseCatalog();
 

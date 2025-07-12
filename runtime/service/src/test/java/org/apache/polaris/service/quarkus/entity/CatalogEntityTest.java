@@ -30,6 +30,7 @@ import org.apache.polaris.core.admin.model.PolarisCatalog;
 import org.apache.polaris.core.admin.model.StorageConfigInfo;
 import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.context.RealmContext;
+import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.persistence.MetaStoreManagerFactory;
 import org.apache.polaris.service.persistence.InMemoryPolarisMetaStoreManagerFactory;
@@ -285,7 +286,7 @@ public class CatalogEntityTest {
             .setStorageConfigurationInfo(callContext, storageConfigModel, baseLocation)
             .build();
 
-    Catalog catalog = catalogEntity.asCatalog();
+    Catalog catalog = CatalogEntityConverter.asCatalog(catalogEntity);
     Assertions.assertThat(catalog.getType()).isEqualTo(Catalog.TypeEnum.INTERNAL);
   }
 
@@ -308,7 +309,7 @@ public class CatalogEntityTest {
             .setStorageConfigurationInfo(callContext, storageConfigModel, baseLocation)
             .build();
 
-    Catalog catalog = catalogEntity.asCatalog();
+    Catalog catalog = CatalogEntityConverter.asCatalog(catalogEntity);
     Assertions.assertThat(catalog.getType()).isEqualTo(Catalog.TypeEnum.EXTERNAL);
   }
 
@@ -331,7 +332,7 @@ public class CatalogEntityTest {
             .setStorageConfigurationInfo(callContext, storageConfigModel, baseLocation)
             .build();
 
-    Catalog catalog = catalogEntity.asCatalog();
+    Catalog catalog = CatalogEntityConverter.asCatalog(catalogEntity);
     Assertions.assertThat(catalog.getType()).isEqualTo(Catalog.TypeEnum.INTERNAL);
   }
 }

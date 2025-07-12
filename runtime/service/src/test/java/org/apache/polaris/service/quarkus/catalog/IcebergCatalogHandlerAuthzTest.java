@@ -58,6 +58,7 @@ import org.apache.polaris.core.auth.AuthenticatedPolarisPrincipal;
 import org.apache.polaris.core.config.PolarisConfigurationStore;
 import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.context.RealmContext;
+import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
 import org.apache.polaris.core.entity.PolarisPrivilege;
@@ -1723,13 +1724,13 @@ public class IcebergCatalogHandlerAuthzTest extends PolarisAuthzTestBase {
             .build();
     adminService.createCatalog(
         new CreateCatalogRequest(
-            new CatalogEntity.Builder()
-                .setName(externalCatalog)
-                .setDefaultBaseLocation(storageLocation)
-                .setStorageConfigurationInfo(callContext, storageConfigModel, storageLocation)
-                .setCatalogType("EXTERNAL")
-                .build()
-                .asCatalog()));
+            CatalogEntityConverter
+                .asCatalog(new CatalogEntity.Builder()
+                    .setName(externalCatalog)
+                    .setDefaultBaseLocation(storageLocation)
+                    .setStorageConfigurationInfo(callContext, storageConfigModel, storageLocation)
+                    .setCatalogType("EXTERNAL")
+                    .build())));
     adminService.createCatalogRole(
         externalCatalog, new CatalogRoleEntity.Builder().setName(CATALOG_ROLE1).build());
     adminService.createCatalogRole(

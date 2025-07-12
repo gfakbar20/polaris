@@ -50,6 +50,7 @@ import org.apache.polaris.core.auth.PolarisAuthorizerImpl;
 import org.apache.polaris.core.config.FeatureConfiguration;
 import org.apache.polaris.core.config.PolarisConfigurationStore;
 import org.apache.polaris.core.context.RealmContext;
+import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.PolarisEntity;
 import org.apache.polaris.core.entity.PolarisEntitySubType;
@@ -216,21 +217,21 @@ public class PolarisGenericTableCatalogTest {
     catalogEntity =
         adminService.createCatalog(
             new CreateCatalogRequest(
-                new CatalogEntity.Builder()
-                    .setName(CATALOG_NAME)
-                    .setDefaultBaseLocation(storageLocation)
-                    .setReplaceNewLocationPrefixWithCatalogDefault("file:")
-                    .addProperty(
-                        FeatureConfiguration.ALLOW_EXTERNAL_TABLE_LOCATION.catalogConfig(), "true")
-                    .addProperty(
-                        FeatureConfiguration.ALLOW_UNSTRUCTURED_TABLE_LOCATION.catalogConfig(),
-                        "true")
-                    .addProperty(
-                        FeatureConfiguration.DROP_WITH_PURGE_ENABLED.catalogConfig(), "true")
-                    .setStorageConfigurationInfo(
-                        polarisContext, storageConfigModel, storageLocation)
-                    .build()
-                    .asCatalog()));
+                CatalogEntityConverter
+                    .asCatalog(new CatalogEntity.Builder()
+                        .setName(CATALOG_NAME)
+                        .setDefaultBaseLocation(storageLocation)
+                        .setReplaceNewLocationPrefixWithCatalogDefault("file:")
+                        .addProperty(
+                            FeatureConfiguration.ALLOW_EXTERNAL_TABLE_LOCATION.catalogConfig(), "true")
+                        .addProperty(
+                            FeatureConfiguration.ALLOW_UNSTRUCTURED_TABLE_LOCATION.catalogConfig(),
+                            "true")
+                        .addProperty(
+                            FeatureConfiguration.DROP_WITH_PURGE_ENABLED.catalogConfig(), "true")
+                        .setStorageConfigurationInfo(
+                            polarisContext, storageConfigModel, storageLocation)
+                        .build())));
 
     PolarisPassthroughResolutionView passthroughView =
         new PolarisPassthroughResolutionView(

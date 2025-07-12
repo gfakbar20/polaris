@@ -65,6 +65,7 @@ import org.apache.polaris.core.auth.PolarisAuthorizer;
 import org.apache.polaris.core.config.FeatureConfiguration;
 import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.context.RealmContext;
+import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
 import org.apache.polaris.core.entity.PolarisPrivilege;
@@ -148,7 +149,7 @@ public class PolarisServiceImpl
     Catalog catalog = request.getCatalog();
     validateStorageConfig(catalog.getStorageConfigInfo());
     validateExternalCatalog(catalog);
-    Catalog newCatalog = new CatalogEntity(adminService.createCatalog(request)).asCatalog();
+    Catalog newCatalog = CatalogEntityConverter.asCatalog(new CatalogEntity(adminService.createCatalog(request)));
     LOGGER.info("Created new catalog {}", newCatalog);
     return Response.status(Response.Status.CREATED).build();
   }
@@ -233,7 +234,7 @@ public class PolarisServiceImpl
   public Response getCatalog(
       String catalogName, RealmContext realmContext, SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(adminService.getCatalog(catalogName).asCatalog()).build();
+    return Response.ok(CatalogEntityConverter.asCatalog(adminService.getCatalog(catalogName))).build();
   }
 
   /** From PolarisCatalogsApiService */
@@ -247,7 +248,7 @@ public class PolarisServiceImpl
     if (updateRequest.getStorageConfigInfo() != null) {
       validateStorageConfig(updateRequest.getStorageConfigInfo());
     }
-    return Response.ok(adminService.updateCatalog(catalogName, updateRequest).asCatalog()).build();
+    return Response.ok(CatalogEntityConverter.asCatalog(adminService.updateCatalog(catalogName, updateRequest))).build();
   }
 
   /** From PolarisCatalogsApiService */
@@ -257,7 +258,7 @@ public class PolarisServiceImpl
     List<Catalog> catalogList =
         adminService.listCatalogs().stream()
             .map(CatalogEntity::new)
-            .map(CatalogEntity::asCatalog)
+            .map(CatalogEntityConverter::asCatalog)
             .toList();
     Catalogs catalogs = new Catalogs(catalogList);
     LOGGER.debug("listCatalogs returning: {}", catalogs);
