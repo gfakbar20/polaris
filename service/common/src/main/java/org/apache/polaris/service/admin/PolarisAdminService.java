@@ -79,6 +79,7 @@ import org.apache.polaris.core.config.FeatureConfiguration;
 import org.apache.polaris.core.connection.AuthenticationParametersDpo;
 import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.entity.CatalogEntity;
+import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
 import org.apache.polaris.core.entity.NamespaceEntity;
 import org.apache.polaris.core.entity.PolarisBaseEntity;
@@ -711,7 +712,7 @@ public class PolarisAdminService {
     PolarisAuthorizableOperation op = PolarisAuthorizableOperation.CREATE_CATALOG;
     authorizeBasicRootOperationOrThrow(op);
 
-    CatalogEntity entity = CatalogEntity.fromCatalog(callContext, catalogRequest.getCatalog());
+    CatalogEntity entity = CatalogEntityConverter.fromCatalog(callContext, catalogRequest.getCatalog());
 
     checkArgument(entity.getId() == -1, "Entity to be created must have no ID assigned");
 

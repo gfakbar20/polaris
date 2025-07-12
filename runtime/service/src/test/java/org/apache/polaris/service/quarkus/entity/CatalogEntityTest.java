@@ -77,7 +77,7 @@ public class CatalogEntityTest {
             .setProperties(props)
             .setStorageConfigInfo(awsStorageConfigModel)
             .build();
-    Assertions.assertThatThrownBy(() -> CatalogEntity.fromCatalog(callContext, awsCatalog))
+    Assertions.assertThatThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, awsCatalog))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining(
             "Location prefix not allowed: 'unsupportPrefix://mybucket/path', expected prefixes");
@@ -103,7 +103,7 @@ public class CatalogEntityTest {
                 new CatalogProperties("abfs://container@storageaccount.blob.windows.net/path"))
             .setStorageConfigInfo(azureStorageConfigModel)
             .build();
-    Assertions.assertThatThrownBy(() -> CatalogEntity.fromCatalog(callContext, azureCatalog))
+    Assertions.assertThatThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, azureCatalog))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("Invalid azure location uri unsupportPrefix://mybucket/path");
 
@@ -120,7 +120,7 @@ public class CatalogEntityTest {
             .setProperties(new CatalogProperties("gs://externally-owned-bucket"))
             .setStorageConfigInfo(gcpStorageConfigModel)
             .build();
-    Assertions.assertThatThrownBy(() -> CatalogEntity.fromCatalog(callContext, gcpCatalog))
+    Assertions.assertThatThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, gcpCatalog))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining(
             "Location prefix not allowed: 'unsupportPrefix://mybucket/path', expected prefixes");
@@ -153,7 +153,7 @@ public class CatalogEntityTest {
             .setProperties(prop)
             .setStorageConfigInfo(awsStorageConfigModel)
             .build();
-    Assertions.assertThatCode(() -> CatalogEntity.fromCatalog(callContext, awsCatalog))
+    Assertions.assertThatCode(() -> CatalogEntityConverter.fromCatalog(callContext, awsCatalog))
         .doesNotThrowAnyException();
   }
 
@@ -179,7 +179,7 @@ public class CatalogEntityTest {
             .setStorageConfigInfo(awsStorageConfigModel)
             .build();
     Assertions.assertThatNoException()
-        .isThrownBy(() -> CatalogEntity.fromCatalog(callContext, awsCatalog));
+        .isThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, awsCatalog));
   }
 
   @Test
@@ -200,7 +200,7 @@ public class CatalogEntityTest {
             .setStorageConfigInfo(azureStorageConfigModel)
             .build();
     Assertions.assertThatNoException()
-        .isThrownBy(() -> CatalogEntity.fromCatalog(callContext, awsCatalog));
+        .isThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, awsCatalog));
     prop.put(CatalogEntity.DEFAULT_BASE_LOCATION_KEY, basedLocation);
 
     Catalog azureCatalog =
@@ -211,7 +211,7 @@ public class CatalogEntityTest {
             .setStorageConfigInfo(azureStorageConfigModel)
             .build();
     Assertions.assertThatNoException()
-        .isThrownBy(() -> CatalogEntity.fromCatalog(callContext, azureCatalog));
+        .isThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, azureCatalog));
 
     basedLocation = "gs://externally-owned-bucket";
     prop.put(CatalogEntity.DEFAULT_BASE_LOCATION_KEY, basedLocation);
@@ -228,7 +228,7 @@ public class CatalogEntityTest {
             .setStorageConfigInfo(gcpStorageConfigModel)
             .build();
     Assertions.assertThatNoException()
-        .isThrownBy(() -> CatalogEntity.fromCatalog(callContext, gcpCatalog));
+        .isThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, gcpCatalog));
   }
 
   @ParameterizedTest
@@ -263,7 +263,7 @@ public class CatalogEntityTest {
         expectedMessage = "Invalid role ARN format";
     }
     ;
-    Assertions.assertThatThrownBy(() -> CatalogEntity.fromCatalog(callContext, awsCatalog))
+    Assertions.assertThatThrownBy(() -> CatalogEntityConverter.fromCatalog(callContext, awsCatalog))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(expectedMessage);
   }

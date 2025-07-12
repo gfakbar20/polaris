@@ -21,6 +21,7 @@ package org.apache.polaris.core.entity;
 
 import static org.apache.polaris.core.admin.model.StorageConfigInfo.StorageTypeEnum.AZURE;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.polaris.core.admin.model.AzureStorageConfigInfo;
@@ -34,6 +35,7 @@ import org.apache.polaris.core.admin.model.GcpStorageConfigInfo;
 import org.apache.polaris.core.admin.model.PolarisCatalog;
 import org.apache.polaris.core.admin.model.StorageConfigInfo;
 import org.apache.polaris.core.connection.ConnectionConfigInfoDpo;
+import org.apache.polaris.core.context.CallContext;
 import org.apache.polaris.core.storage.FileStorageConfigurationInfo;
 import org.apache.polaris.core.storage.PolarisStorageConfigurationInfo;
 import org.apache.polaris.core.storage.aws.AwsStorageConfigurationInfo;
@@ -125,4 +127,18 @@ public final class CatalogEntityConverter {
     }
     return null;
   }
+
+    public static CatalogEntity fromCatalog(CallContext callContext, Catalog catalog) {
+      CatalogEntity.Builder builder =
+          new CatalogEntity.Builder()
+              .setName(catalog.getName())
+              .setProperties(catalog.getProperties().toMap())
+              .setCatalogType(catalog.getType().name());
+      Map<String, String> internalProperties = new HashMap<>();
+      internalProperties.put(CatalogEntity.CATALOG_TYPE_PROPERTY, catalog.getType().name());
+      builder.setInternalProperties(internalProperties);
+      builder.setStorageConfigurationInfo(
+          callContext, catalog.getStorageConfigInfo(), CatalogEntity.getBaseLocation(catalog));
+      return builder.build();
+    }
 }

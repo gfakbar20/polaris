@@ -18,13 +18,10 @@
  */
 package org.apache.polaris.core.entity;
 
-import static org.apache.polaris.core.admin.model.StorageConfigInfo.StorageTypeEnum.AZURE;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -34,12 +31,8 @@ import org.apache.polaris.core.PolarisDefaultDiagServiceImpl;
 import org.apache.polaris.core.admin.model.AwsStorageConfigInfo;
 import org.apache.polaris.core.admin.model.AzureStorageConfigInfo;
 import org.apache.polaris.core.admin.model.Catalog;
-import org.apache.polaris.core.admin.model.CatalogProperties;
 import org.apache.polaris.core.admin.model.ConnectionConfigInfo;
-import org.apache.polaris.core.admin.model.ExternalCatalog;
-import org.apache.polaris.core.admin.model.FileStorageConfigInfo;
 import org.apache.polaris.core.admin.model.GcpStorageConfigInfo;
-import org.apache.polaris.core.admin.model.PolarisCatalog;
 import org.apache.polaris.core.admin.model.StorageConfigInfo;
 import org.apache.polaris.core.config.BehaviorChangeConfiguration;
 import org.apache.polaris.core.connection.ConnectionConfigInfoDpo;
@@ -79,20 +72,6 @@ public class CatalogEntity extends PolarisEntity implements LocationBasedEntity 
       return new CatalogEntity(sourceEntity);
     }
     return null;
-  }
-
-  public static CatalogEntity fromCatalog(CallContext callContext, Catalog catalog) {
-    Builder builder =
-        new Builder()
-            .setName(catalog.getName())
-            .setProperties(catalog.getProperties().toMap())
-            .setCatalogType(catalog.getType().name());
-    Map<String, String> internalProperties = new HashMap<>();
-    internalProperties.put(CATALOG_TYPE_PROPERTY, catalog.getType().name());
-    builder.setInternalProperties(internalProperties);
-    builder.setStorageConfigurationInfo(
-        callContext, catalog.getStorageConfigInfo(), getBaseLocation(catalog));
-    return builder.build();
   }
 
   @Override
