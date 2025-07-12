@@ -62,17 +62,8 @@ public final class CatalogEntityConverter {
         CatalogProperties.builder(propertiesMap.get(DEFAULT_BASE_LOCATION_KEY))
             .putAll(propertiesMap)
             .build();
-    return catalogType == Catalog.TypeEnum.INTERNAL
-        ? PolarisCatalog.builder()
-            .setType(Catalog.TypeEnum.INTERNAL)
-            .setName(entity.getName())
-            .setProperties(catalogProps)
-            .setCreateTimestamp(entity.getCreateTimestamp())
-            .setLastUpdateTimestamp(entity.getLastUpdateTimestamp())
-            .setEntityVersion(entity.getEntityVersion())
-            .setStorageConfigInfo(getEntityStorageInfo(internalProperties, entity))
-            .build()
-        : ExternalCatalog.builder()
+    return catalogType == Catalog.TypeEnum.EXTERNAL
+        ? ExternalCatalog.builder()
             .setType(Catalog.TypeEnum.EXTERNAL)
             .setName(entity.getName())
             .setProperties(catalogProps)
@@ -81,6 +72,15 @@ public final class CatalogEntityConverter {
             .setEntityVersion(entity.getEntityVersion())
             .setStorageConfigInfo(getEntityStorageInfo(internalProperties, entity))
             .setConnectionConfigInfo(getEntityConnectionInfo(internalProperties, entity))
+            .build()
+        : PolarisCatalog.builder()
+            .setType(Catalog.TypeEnum.INTERNAL)
+            .setName(entity.getName())
+            .setProperties(catalogProps)
+            .setCreateTimestamp(entity.getCreateTimestamp())
+            .setLastUpdateTimestamp(entity.getLastUpdateTimestamp())
+            .setEntityVersion(entity.getEntityVersion())
+            .setStorageConfigInfo(getEntityStorageInfo(internalProperties, entity))
             .build();
   }
 

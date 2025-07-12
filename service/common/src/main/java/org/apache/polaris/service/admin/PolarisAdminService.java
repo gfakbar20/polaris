@@ -1131,7 +1131,7 @@ public class PolarisAdminService {
                 currentPrincipalEntity.getId(),
                 currentPrincipalEntity.getType()));
     return new PrincipalWithCredentials(
-        toPrincipal(PrincipalEntity.of(newPrincipal)),
+        PrincipalEntityConverter.toApiPayloadSchema(PrincipalEntity.of(newPrincipal)),
         new PrincipalWithCredentialsCredentials(
             newSecrets.getPrincipalClientId(), newSecrets.getMainSecret()));
   }

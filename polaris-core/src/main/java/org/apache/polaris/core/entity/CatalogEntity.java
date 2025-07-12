@@ -24,7 +24,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,12 +32,8 @@ import org.apache.polaris.core.PolarisDefaultDiagServiceImpl;
 import org.apache.polaris.core.admin.model.AwsStorageConfigInfo;
 import org.apache.polaris.core.admin.model.AzureStorageConfigInfo;
 import org.apache.polaris.core.admin.model.Catalog;
-import org.apache.polaris.core.admin.model.CatalogProperties;
 import org.apache.polaris.core.admin.model.ConnectionConfigInfo;
-import org.apache.polaris.core.admin.model.ExternalCatalog;
-import org.apache.polaris.core.admin.model.FileStorageConfigInfo;
 import org.apache.polaris.core.admin.model.GcpStorageConfigInfo;
-import org.apache.polaris.core.admin.model.PolarisCatalog;
 import org.apache.polaris.core.admin.model.StorageConfigInfo;
 import org.apache.polaris.core.config.BehaviorChangeConfiguration;
 import org.apache.polaris.core.connection.ConnectionConfigInfoDpo;
@@ -76,104 +71,6 @@ public class CatalogEntity extends PolarisEntity implements LocationBasedEntity 
   public static CatalogEntity of(PolarisBaseEntity sourceEntity) {
     if (sourceEntity != null) {
       return new CatalogEntity(sourceEntity);
-    }
-    return null;
-  }
-
-  public static CatalogEntity fromCatalog(CallContext callContext, Catalog catalog) {
-    Builder builder =
-        new Builder()
-            .setName(catalog.getName())
-            .setProperties(catalog.getProperties().toMap())
-            .setCatalogType(catalog.getType().name());
-    Map<String, String> internalProperties = new HashMap<>();
-    internalProperties.put(CATALOG_TYPE_PROPERTY, catalog.getType().name());
-    builder.setInternalProperties(internalProperties);
-    builder.setStorageConfigurationInfo(
-        callContext, catalog.getStorageConfigInfo(), getBaseLocation(catalog));
-    return builder.build();
-  }
-
-  public Catalog asCatalog() {
-    Map<String, String> internalProperties = getInternalPropertiesAsMap();
-    Catalog.TypeEnum catalogType =
-        Optional.ofNullable(internalProperties.get(CATALOG_TYPE_PROPERTY))
-            .map(Catalog.TypeEnum::valueOf)
-            .orElseGet(() -> getName().equalsIgnoreCase("ROOT") ? Catalog.TypeEnum.INTERNAL : null);
-    Map<String, String> propertiesMap = getPropertiesAsMap();
-    CatalogProperties catalogProps =
-        CatalogProperties.builder(propertiesMap.get(DEFAULT_BASE_LOCATION_KEY))
-            .putAll(propertiesMap)
-            .build();
-    return catalogType == Catalog.TypeEnum.EXTERNAL
-        ? ExternalCatalog.builder()
-            .setType(Catalog.TypeEnum.EXTERNAL)
-            .setName(getName())
-            .setProperties(catalogProps)
-            .setCreateTimestamp(getCreateTimestamp())
-            .setLastUpdateTimestamp(getLastUpdateTimestamp())
-            .setEntityVersion(getEntityVersion())
-            .setStorageConfigInfo(getStorageInfo(internalProperties))
-            .setConnectionConfigInfo(getConnectionInfo(internalProperties))
-            .build()
-        : PolarisCatalog.builder()
-            .setType(Catalog.TypeEnum.INTERNAL)
-            .setName(getName())
-            .setProperties(catalogProps)
-            .setCreateTimestamp(getCreateTimestamp())
-            .setLastUpdateTimestamp(getLastUpdateTimestamp())
-            .setEntityVersion(getEntityVersion())
-            .setStorageConfigInfo(getStorageInfo(internalProperties))
-            .build();
-  }
-
-  private StorageConfigInfo getStorageInfo(Map<String, String> internalProperties) {
-    if (internalProperties.containsKey(PolarisEntityConstants.getStorageConfigInfoPropertyName())) {
-      PolarisStorageConfigurationInfo configInfo = getStorageConfigurationInfo();
-      if (configInfo instanceof AwsStorageConfigurationInfo) {
-        AwsStorageConfigurationInfo awsConfig = (AwsStorageConfigurationInfo) configInfo;
-        return AwsStorageConfigInfo.builder()
-            .setRoleArn(awsConfig.getRoleARN())
-            .setExternalId(awsConfig.getExternalId())
-            .setUserArn(awsConfig.getUserARN())
-            .setStorageType(StorageConfigInfo.StorageTypeEnum.S3)
-            .setAllowedLocations(awsConfig.getAllowedLocations())
-            .setRegion(awsConfig.getRegion())
-            .build();
-      }
-      if (configInfo instanceof AzureStorageConfigurationInfo) {
-        AzureStorageConfigurationInfo azureConfig = (AzureStorageConfigurationInfo) configInfo;
-        return AzureStorageConfigInfo.builder()
-            .setTenantId(azureConfig.getTenantId())
-            .setMultiTenantAppName(azureConfig.getMultiTenantAppName())
-            .setConsentUrl(azureConfig.getConsentUrl())
-            .setStorageType(AZURE)
-            .setAllowedLocations(azureConfig.getAllowedLocations())
-            .build();
-      }
-      if (configInfo instanceof GcpStorageConfigurationInfo) {
-        GcpStorageConfigurationInfo gcpConfigModel = (GcpStorageConfigurationInfo) configInfo;
-        return GcpStorageConfigInfo.builder()
-            .setGcsServiceAccount(gcpConfigModel.getGcpServiceAccount())
-            .setStorageType(StorageConfigInfo.StorageTypeEnum.GCS)
-            .setAllowedLocations(gcpConfigModel.getAllowedLocations())
-            .build();
-      }
-      if (configInfo instanceof FileStorageConfigurationInfo) {
-        FileStorageConfigurationInfo fileConfigModel = (FileStorageConfigurationInfo) configInfo;
-        return new FileStorageConfigInfo(
-            StorageConfigInfo.StorageTypeEnum.FILE, fileConfigModel.getAllowedLocations());
-      }
-      return null;
-    }
-    return null;
-  }
-
-  private ConnectionConfigInfo getConnectionInfo(Map<String, String> internalProperties) {
-    if (internalProperties.containsKey(
-        PolarisEntityConstants.getConnectionConfigInfoPropertyName())) {
-      ConnectionConfigInfoDpo configInfo = getConnectionConfigInfoDpo();
-      return configInfo.asConnectionConfigInfoModel();
     }
     return null;
   }

@@ -290,7 +290,7 @@ public class CatalogEntityConverterTest {
             .setStorageConfigurationInfo(callContext, storageConfigModel, baseLocation)
             .build();
 
-    Catalog catalog = catalogEntity.asCatalog();
+    Catalog catalog = CatalogEntityConverter.toApiPayloadSchema(catalogEntity);
     Assertions.assertThat(catalog.getType()).isEqualTo(Catalog.TypeEnum.INTERNAL);
   }
 
@@ -313,7 +313,7 @@ public class CatalogEntityConverterTest {
             .setStorageConfigurationInfo(callContext, storageConfigModel, baseLocation)
             .build();
 
-    Catalog catalog = catalogEntity.asCatalog();
+    Catalog catalog = CatalogEntityConverter.toApiPayloadSchema(catalogEntity);
     Assertions.assertThat(catalog.getType()).isEqualTo(Catalog.TypeEnum.EXTERNAL);
   }
 
@@ -336,7 +336,7 @@ public class CatalogEntityConverterTest {
             .setStorageConfigurationInfo(callContext, storageConfigModel, baseLocation)
             .build();
 
-    Catalog catalog = catalogEntity.asCatalog();
+    Catalog catalog = CatalogEntityConverter.toApiPayloadSchema(catalogEntity);
     Assertions.assertThat(catalog.getType()).isEqualTo(Catalog.TypeEnum.INTERNAL);
   }
 }
