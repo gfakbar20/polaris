@@ -99,6 +99,7 @@ import org.apache.polaris.core.context.RealmContext;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.LocationBasedEntity;
 import org.apache.polaris.core.entity.NamespaceEntity;
+import org.apache.polaris.core.entity.NamespaceEntityConverter;
 import org.apache.polaris.core.entity.PolarisEntity;
 import org.apache.polaris.core.entity.PolarisEntityConstants;
 import org.apache.polaris.core.entity.PolarisEntitySubType;
@@ -1230,7 +1231,7 @@ public class IcebergCatalog extends BaseMetastoreViewCatalog
                         "Unable to resolve siblings entities to validate location - could not list tables");
                   }
                   return siblingTablesResult.getEntities().stream()
-                      .map(tbl -> TableIdentifier.of(ns.asNamespace(), tbl.getName()))
+                      .map(tbl -> TableIdentifier.of(NamespaceEntityConverter.asNamespace(ns), tbl.getName()))
                       .collect(Collectors.toList());
                 })
             .orElse(List.of());
@@ -1241,7 +1242,7 @@ public class IcebergCatalog extends BaseMetastoreViewCatalog
                 ns -> {
                   String[] nsLevels =
                       parentNamespace
-                          .map(parent -> parent.asNamespace().levels())
+                          .map(parent -> NamespaceEntityConverter.asNamespace(parent).levels())
                           .orElse(new String[0]);
                   String[] newLevels = Arrays.copyOf(nsLevels, nsLevels.length + 1);
                   newLevels[nsLevels.length] = ns.getName();

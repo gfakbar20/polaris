@@ -82,6 +82,7 @@ import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
 import org.apache.polaris.core.entity.NamespaceEntity;
+import org.apache.polaris.core.entity.NamespaceEntityConverter;
 import org.apache.polaris.core.entity.PolarisBaseEntity;
 import org.apache.polaris.core.entity.PolarisEntity;
 import org.apache.polaris.core.entity.PolarisEntitySubType;
@@ -90,6 +91,7 @@ import org.apache.polaris.core.entity.PolarisGrantRecord;
 import org.apache.polaris.core.entity.PolarisPrincipalSecrets;
 import org.apache.polaris.core.entity.PolarisPrivilege;
 import org.apache.polaris.core.entity.PrincipalEntity;
+import org.apache.polaris.core.entity.PrincipalEntityConverter;
 import org.apache.polaris.core.entity.PrincipalRoleEntity;
 import org.apache.polaris.core.entity.table.IcebergTableLikeEntity;
 import org.apache.polaris.core.entity.table.federated.FederatedEntities;
@@ -1008,7 +1010,7 @@ public class PolarisAdminService {
           entity.getName());
     }
     return new PrincipalWithCredentials(
-        new PrincipalEntity(principalResult.getPrincipal()).asPrincipal(),
+        PrincipalEntityConverter.asPrincipal(new PrincipalEntity(principalResult.getPrincipal())),
         new PrincipalWithCredentialsCredentials(
             principalResult.getPrincipalSecrets().getPrincipalClientId(),
             principalResult.getPrincipalSecrets().getMainSecret()));
@@ -1127,7 +1129,7 @@ public class PolarisAdminService {
                 currentPrincipalEntity.getId(),
                 currentPrincipalEntity.getType()));
     return new PrincipalWithCredentials(
-        PrincipalEntity.of(newPrincipal).asPrincipal(),
+        PrincipalEntityConverter.asPrincipal(PrincipalEntity.of(newPrincipal)),
         new PrincipalWithCredentialsCredentials(
             newSecrets.getPrincipalClientId(), newSecrets.getMainSecret()));
   }
@@ -1902,7 +1904,7 @@ public class PolarisAdminService {
             {
               NamespaceGrant grant =
                   new NamespaceGrant(
-                      List.of(NamespaceEntity.of(baseEntity).asNamespace().levels()),
+                      List.of(NamespaceEntityConverter.asNamespace(NamespaceEntity.of(baseEntity)).levels()),
                       NamespacePrivilege.valueOf(privilege.toString()),
                       GrantResource.TypeEnum.NAMESPACE);
               namespaceGrants.add(grant);

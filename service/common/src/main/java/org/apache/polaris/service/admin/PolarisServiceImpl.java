@@ -68,9 +68,12 @@ import org.apache.polaris.core.context.RealmContext;
 import org.apache.polaris.core.entity.CatalogEntityConverter;
 import org.apache.polaris.core.entity.CatalogEntity;
 import org.apache.polaris.core.entity.CatalogRoleEntity;
+import org.apache.polaris.core.entity.CatalogRoleEntityConverter;
 import org.apache.polaris.core.entity.PolarisPrivilege;
 import org.apache.polaris.core.entity.PrincipalEntity;
+import org.apache.polaris.core.entity.PrincipalEntityConverter;
 import org.apache.polaris.core.entity.PrincipalRoleEntity;
+import org.apache.polaris.core.entity.PrincipalRoleEntityConverter;
 import org.apache.polaris.core.persistence.MetaStoreManagerFactory;
 import org.apache.polaris.core.persistence.PolarisEntityManager;
 import org.apache.polaris.core.persistence.PolarisMetaStoreManager;
@@ -300,7 +303,7 @@ public class PolarisServiceImpl
   public Response getPrincipal(
       String principalName, RealmContext realmContext, SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(adminService.getPrincipal(principalName).asPrincipal()).build();
+    return Response.ok(PrincipalEntityConverter.asPrincipal(adminService.getPrincipal(principalName))).build();
   }
 
   /** From PolarisPrincipalsApiService */
@@ -311,7 +314,7 @@ public class PolarisServiceImpl
       RealmContext realmContext,
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(adminService.updatePrincipal(principalName, updateRequest).asPrincipal())
+    return Response.ok(PrincipalEntityConverter.asPrincipal(adminService.updatePrincipal(principalName, updateRequest)))
         .build();
   }
 
@@ -330,7 +333,7 @@ public class PolarisServiceImpl
     List<Principal> principalList =
         adminService.listPrincipals().stream()
             .map(PrincipalEntity::new)
-            .map(PrincipalEntity::asPrincipal)
+            .map(PrincipalEntityConverter::asPrincipal)
             .toList();
     Principals principals = new Principals(principalList);
     LOGGER.debug("listPrincipals returning: {}", principals);
@@ -352,7 +355,7 @@ public class PolarisServiceImpl
                     request.getPrincipalRole().getProperties()))
             .build();
     PrincipalRole newPrincipalRole =
-        new PrincipalRoleEntity(adminService.createPrincipalRole(entity)).asPrincipalRole();
+        PrincipalRoleEntityConverter.asPrincipalRole(new PrincipalRoleEntity(adminService.createPrincipalRole(entity)));
     LOGGER.info("Created new principalRole {}", newPrincipalRole);
     return Response.status(Response.Status.CREATED).build();
   }
@@ -371,7 +374,7 @@ public class PolarisServiceImpl
   public Response getPrincipalRole(
       String principalRoleName, RealmContext realmContext, SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(adminService.getPrincipalRole(principalRoleName).asPrincipalRole()).build();
+    return Response.ok(PrincipalRoleEntityConverter.asPrincipalRole(adminService.getPrincipalRole(principalRoleName))).build();
   }
 
   /** From PolarisPrincipalRolesApiService */
@@ -383,7 +386,7 @@ public class PolarisServiceImpl
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
     return Response.ok(
-            adminService.updatePrincipalRole(principalRoleName, updateRequest).asPrincipalRole())
+            PrincipalRoleEntityConverter.asPrincipalRole(adminService.updatePrincipalRole(principalRoleName, updateRequest)))
         .build();
   }
 
@@ -394,7 +397,7 @@ public class PolarisServiceImpl
     List<PrincipalRole> principalRoleList =
         adminService.listPrincipalRoles().stream()
             .map(PrincipalRoleEntity::new)
-            .map(PrincipalRoleEntity::asPrincipalRole)
+            .map(PrincipalRoleEntityConverter::asPrincipalRole)
             .toList();
     PrincipalRoles principalRoles = new PrincipalRoles(principalRoleList);
     LOGGER.debug("listPrincipalRoles returning: {}", principalRoles);
@@ -417,7 +420,7 @@ public class PolarisServiceImpl
                     request.getCatalogRole().getProperties()))
             .build();
     CatalogRole newCatalogRole =
-        new CatalogRoleEntity(adminService.createCatalogRole(catalogName, entity)).asCatalogRole();
+        CatalogRoleEntityConverter.asCatalogRole(new CatalogRoleEntity(adminService.createCatalogRole(catalogName, entity)));
     LOGGER.info("Created new catalogRole {}", newCatalogRole);
     return Response.status(Response.Status.CREATED).build();
   }
@@ -442,7 +445,7 @@ public class PolarisServiceImpl
       RealmContext realmContext,
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
-    return Response.ok(adminService.getCatalogRole(catalogName, catalogRoleName).asCatalogRole())
+    return Response.ok(CatalogRoleEntityConverter.asCatalogRole(adminService.getCatalogRole(catalogName, catalogRoleName)))
         .build();
   }
 
@@ -456,9 +459,9 @@ public class PolarisServiceImpl
       SecurityContext securityContext) {
     PolarisAdminService adminService = newAdminService(realmContext, securityContext);
     return Response.ok(
-            adminService
-                .updateCatalogRole(catalogName, catalogRoleName, updateRequest)
-                .asCatalogRole())
+            CatalogRoleEntityConverter
+                .asCatalogRole(adminService
+                    .updateCatalogRole(catalogName, catalogRoleName, updateRequest)))
         .build();
   }
 
@@ -470,7 +473,7 @@ public class PolarisServiceImpl
     List<CatalogRole> catalogRoleList =
         adminService.listCatalogRoles(catalogName).stream()
             .map(CatalogRoleEntity::new)
-            .map(CatalogRoleEntity::asCatalogRole)
+            .map(CatalogRoleEntityConverter::asCatalogRole)
             .toList();
     CatalogRoles catalogRoles = new CatalogRoles(catalogRoleList);
     LOGGER.debug("listCatalogRoles returning: {}", catalogRoles);
@@ -514,7 +517,7 @@ public class PolarisServiceImpl
     List<PrincipalRole> principalRoleList =
         adminService.listPrincipalRolesAssigned(principalName).stream()
             .map(PrincipalRoleEntity::new)
-            .map(PrincipalRoleEntity::asPrincipalRole)
+            .map(PrincipalRoleEntityConverter::asPrincipalRole)
             .toList();
     PrincipalRoles principalRoles = new PrincipalRoles(principalRoleList);
     LOGGER.debug("listPrincipalRolesAssigned returning: {}", principalRoles);
@@ -567,7 +570,7 @@ public class PolarisServiceImpl
     List<Principal> principalList =
         adminService.listAssigneePrincipalsForPrincipalRole(principalRoleName).stream()
             .map(PrincipalEntity::new)
-            .map(PrincipalEntity::asPrincipal)
+            .map(PrincipalEntityConverter::asPrincipal)
             .toList();
     Principals principals = new Principals(principalList);
     LOGGER.debug("listAssigneePrincipalsForPrincipalRole returning: {}", principals);
@@ -585,7 +588,7 @@ public class PolarisServiceImpl
     List<CatalogRole> catalogRoleList =
         adminService.listCatalogRolesForPrincipalRole(principalRoleName, catalogName).stream()
             .map(CatalogRoleEntity::new)
-            .map(CatalogRoleEntity::asCatalogRole)
+            .map(CatalogRoleEntityConverter::asCatalogRole)
             .toList();
     CatalogRoles catalogRoles = new CatalogRoles(catalogRoleList);
     LOGGER.debug("listCatalogRolesForPrincipalRole returning: {}", catalogRoles);
@@ -775,7 +778,7 @@ public class PolarisServiceImpl
     List<PrincipalRole> principalRoleList =
         adminService.listAssigneePrincipalRolesForCatalogRole(catalogName, catalogRoleName).stream()
             .map(PrincipalRoleEntity::new)
-            .map(PrincipalRoleEntity::asPrincipalRole)
+            .map(PrincipalRoleEntityConverter::asPrincipalRole)
             .toList();
     PrincipalRoles principalRoles = new PrincipalRoles(principalRoleList);
     LOGGER.debug("listAssigneePrincipalRolesForCatalogRole returning: {}", principalRoles);
