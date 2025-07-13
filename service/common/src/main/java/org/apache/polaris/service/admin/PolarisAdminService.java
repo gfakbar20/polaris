@@ -91,7 +91,6 @@ import org.apache.polaris.core.entity.PolarisGrantRecord;
 import org.apache.polaris.core.entity.PolarisPrincipalSecrets;
 import org.apache.polaris.core.entity.PolarisPrivilege;
 import org.apache.polaris.core.entity.PrincipalEntity;
-import org.apache.polaris.core.entity.PrincipalEntityConverter;
 import org.apache.polaris.core.entity.PrincipalRoleEntity;
 import org.apache.polaris.core.entity.table.IcebergTableLikeEntity;
 import org.apache.polaris.core.entity.table.federated.FederatedEntities;
@@ -1010,7 +1009,7 @@ public class PolarisAdminService {
           entity.getName());
     }
     return new PrincipalWithCredentials(
-        PrincipalEntityConverter.asPrincipal(new PrincipalEntity(principalResult.getPrincipal())),
+        new PrincipalEntity(principalResult.getPrincipal()).asPrincipal(),
         new PrincipalWithCredentialsCredentials(
             principalResult.getPrincipalSecrets().getPrincipalClientId(),
             principalResult.getPrincipalSecrets().getMainSecret()));
@@ -1129,7 +1128,7 @@ public class PolarisAdminService {
                 currentPrincipalEntity.getId(),
                 currentPrincipalEntity.getType()));
     return new PrincipalWithCredentials(
-        PrincipalEntityConverter.asPrincipal(PrincipalEntity.of(newPrincipal)),
+        PrincipalEntity.of(newPrincipal).asPrincipal(),
         new PrincipalWithCredentialsCredentials(
             newSecrets.getPrincipalClientId(), newSecrets.getMainSecret()));
   }

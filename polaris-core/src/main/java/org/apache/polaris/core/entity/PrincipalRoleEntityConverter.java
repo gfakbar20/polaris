@@ -20,7 +20,6 @@
 package org.apache.polaris.core.entity;
 
 import org.apache.polaris.core.admin.model.PrincipalRole;
-import org.apache.polaris.core.entity.table.federated.FederatedEntities;
 
 public final class PrincipalRoleEntityConverter {
     public static PrincipalRoleEntity fromPrincipalRole(PrincipalRole principalRole) {
@@ -31,13 +30,4 @@ public final class PrincipalRoleEntityConverter {
           .build();
     }
 
-    public static PrincipalRole asPrincipalRole(PrincipalRoleEntity entity) {
-      return new PrincipalRole(
-          entity.getName(),
-          FederatedEntities.isFederated(entity),
-          entity.getPropertiesAsMap(),
-          entity.getCreateTimestamp(),
-          entity.getLastUpdateTimestamp(),
-          entity.getEntityVersion());
-    }
 }

@@ -477,6 +477,7 @@ public class IcebergCatalogAdapter
       RegisterTableRequest registerTableRequest,
       RealmContext realmContext,
       SecurityContext securityContext) {
+    LOGGER.info("token intTest: {}, {}", securityContext.getUserPrincipal());
     Namespace ns = decodeNamespace(namespace);
     return withCatalog(
         securityContext,

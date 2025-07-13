@@ -22,15 +22,6 @@ package org.apache.polaris.core.entity;
 import org.apache.polaris.core.admin.model.Principal;
 
 public final class PrincipalEntityConverter {
-    public static Principal asPrincipal(PrincipalEntity entity) {
-      return new Principal(
-          entity.getName(),
-          entity.getClientId(),
-          entity.getPropertiesAsMap(),
-          entity.getCreateTimestamp(),
-          entity.getLastUpdateTimestamp(),
-          entity.getEntityVersion());
-    }
 
     public static PrincipalEntity fromPrincipal(Principal principal) {
       return new PrincipalEntity.Builder()

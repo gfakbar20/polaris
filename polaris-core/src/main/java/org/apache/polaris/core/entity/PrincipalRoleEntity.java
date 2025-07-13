@@ -18,6 +18,7 @@
  */
 package org.apache.polaris.core.entity;
 
+import org.apache.polaris.core.admin.model.PrincipalRole;
 import org.apache.polaris.core.entity.table.federated.FederatedEntities;
 
 /**
@@ -33,6 +34,16 @@ public class PrincipalRoleEntity extends PolarisEntity {
       return new PrincipalRoleEntity(sourceEntity);
     }
     return null;
+  }
+
+  public PrincipalRole asPrincipalRole() {
+    return new PrincipalRole(
+        getName(),
+        FederatedEntities.isFederated(this),
+        getPropertiesAsMap(),
+        getCreateTimestamp(),
+        getLastUpdateTimestamp(),
+        getEntityVersion());
   }
 
   public static class Builder extends PolarisEntity.BaseBuilder<PrincipalRoleEntity, Builder> {

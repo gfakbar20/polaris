@@ -25,12 +25,17 @@ import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.exceptions.NotAuthorizedException;
 import org.apache.iceberg.rest.RESTUtil;
 import org.apache.polaris.core.auth.AuthenticatedPolarisPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A common interface for adapters between the REST interface and {@link CatalogHandler}
  * implementations
  */
 public interface CatalogAdapter {
+
+  Logger log = LoggerFactory.getLogger(CatalogAdapter.class);
+
   default Namespace decodeNamespace(String namespace) {
     return RESTUtil.decodeNamespace(URLEncoder.encode(namespace, Charset.defaultCharset()));
   }
@@ -38,6 +43,7 @@ public interface CatalogAdapter {
   default void validatePrincipal(SecurityContext securityContext) {
     var authenticatedPrincipal = (AuthenticatedPolarisPrincipal) securityContext.getUserPrincipal();
     if (authenticatedPrincipal == null) {
+      log.info("isPrincipalNull: {}", authenticatedPrincipal == null);
       throw new NotAuthorizedException("Failed to find authenticatedPrincipal in SecurityContext");
     }
   }
